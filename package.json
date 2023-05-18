@@ -29,7 +29,9 @@
   },
   "dependencies": {
     "@causa/cli": ">= 0.2.1 < 1.0.0",
-    "@causa/workspace": ">= 0.4.0 < 1.0.0"
+    "@causa/workspace": ">= 0.4.0 < 1.0.0",
+    "@causa/workspace-core": ">= 0.1.0 < 1.0.0",
+    "pino": "^8.14.1"
   },
   "devDependencies": {
     "@tsconfig/node18": "^2.0.1",
