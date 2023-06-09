@@ -249,5 +249,22 @@ describe('TerraformService', () => {
         expectedSpawnOptions,
       );
     });
+
+    it('should throw if no workspace is configured', async () => {
+      ({ context } = createContext({}));
+      service = context.service(TerraformService);
+      terraformSpy = jest
+        .spyOn(service, 'terraform')
+        .mockResolvedValue({ code: 0 });
+      const fn = jest.fn(() => Promise.resolve());
+
+      const actualPromise = service.wrapWorkspaceOperation({}, fn);
+
+      await expect(actualPromise).rejects.toThrow(
+        'The Terraform workspace for the operation is not configured.',
+      );
+      expect(fn).not.toHaveBeenCalled();
+      expect(service.terraform).not.toHaveBeenCalled();
+    });
   });
 });

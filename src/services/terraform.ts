@@ -52,7 +52,7 @@ export class TerraformService {
    * The default Terraform workspace, obtained from the configuration at `terraform.workspace`.
    * This is used by {@link TerraformService.wrapWorkspaceOperation} if no workspace is specified.
    */
-  private readonly defaultTerraformWorkspace: string;
+  private readonly defaultTerraformWorkspace: string | undefined;
 
   constructor(context: WorkspaceContext) {
     this.processService = context.service(ProcessService);
@@ -62,7 +62,7 @@ export class TerraformService {
     this.logger = context.logger;
     this.defaultTerraformWorkspace = context
       .asConfiguration<TerraformConfiguration>()
-      .getOrThrow('terraform.workspace');
+      .get('terraform.workspace');
   }
 
   /**
@@ -217,11 +217,17 @@ export class TerraformService {
     const { skipInit, createWorkspaceIfNeeded, workspace, ...spawnOptions } =
       options;
 
+    const workspaceToSelect = workspace ?? this.defaultTerraformWorkspace;
+    if (workspaceToSelect === undefined) {
+      throw new Error(
+        'The Terraform workspace for the operation is not configured.',
+      );
+    }
+
     if (!skipInit) {
       await this.init(spawnOptions);
     }
 
-    const workspaceToSelect = workspace ?? this.defaultTerraformWorkspace;
     let workspaceToRestore: string | null = null;
 
     try {
