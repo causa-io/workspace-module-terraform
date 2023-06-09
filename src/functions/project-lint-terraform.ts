@@ -37,6 +37,8 @@ export class ProjectLintForTerraform extends ProjectLint {
         targets,
         logging: 'info',
       });
+
+      context.logger.info('✅ Terraform code passed linting.');
     } catch (error) {
       if (error instanceof ProcessServiceExitCodeError) {
         throw new Error('Linting the Terraform project failed.');
