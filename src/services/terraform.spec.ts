@@ -157,6 +157,20 @@ describe('TerraformService', () => {
     });
   });
 
+  describe('validate', () => {
+    it('should run the validate command', async () => {
+      terraformSpy.mockResolvedValueOnce({ code: 0 });
+
+      await service.validate();
+
+      expect(service.terraform).toHaveBeenCalledExactlyOnceWith(
+        'validate',
+        [],
+        {},
+      );
+    });
+  });
+
   describe('wrapWorkspaceOperation', () => {
     it('should select the workspace before running the function', async () => {
       const expectedResult = '✨';

@@ -186,6 +186,15 @@ export class TerraformService {
   }
 
   /**
+   * Runs `terraform validate`.
+   *
+   * @param options Options when running the command.
+   */
+  async validate(options: SpawnOptions = {}): Promise<void> {
+    await this.terraform('validate', [], options);
+  }
+
+  /**
    * Wrap the `fn` function and ensures Terraform is initialized and that the correct Terraform workspace is selected.
    * After `fn` has run, the workspace is reverted back to the previous workspace if necessary.
    *
