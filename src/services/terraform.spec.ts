@@ -176,8 +176,10 @@ describe('TerraformService', () => {
       );
 
       expect(actualResult).toEqual(expectedResult);
-      expect(service.init).toHaveBeenCalledOnceWith(expectedSpawnOptions);
-      expect(service.workspaceShow).toHaveBeenCalledOnceWith(
+      expect(service.init).toHaveBeenCalledExactlyOnceWith(
+        expectedSpawnOptions,
+      );
+      expect(service.workspaceShow).toHaveBeenCalledExactlyOnceWith(
         expectedSpawnOptions,
       );
       expect(service.workspaceSelect).toHaveBeenCalledWith('new', {
@@ -205,8 +207,10 @@ describe('TerraformService', () => {
       );
 
       expect(actualResult).toEqual(expectedResult);
-      expect(service.init).toHaveBeenCalledOnceWith(expectedSpawnOptions);
-      expect(service.workspaceShow).toHaveBeenCalledOnceWith(
+      expect(service.init).toHaveBeenCalledExactlyOnceWith(
+        expectedSpawnOptions,
+      );
+      expect(service.workspaceShow).toHaveBeenCalledExactlyOnceWith(
         expectedSpawnOptions,
       );
       expect(service.workspaceSelect).not.toHaveBeenCalled();
@@ -229,8 +233,10 @@ describe('TerraformService', () => {
       );
 
       await expect(actualPromise).rejects.toThrowError(expectedError);
-      expect(service.init).toHaveBeenCalledOnceWith(expectedSpawnOptions);
-      expect(service.workspaceShow).toHaveBeenCalledOnceWith(
+      expect(service.init).toHaveBeenCalledExactlyOnceWith(
+        expectedSpawnOptions,
+      );
+      expect(service.workspaceShow).toHaveBeenCalledExactlyOnceWith(
         expectedSpawnOptions,
       );
       expect(service.workspaceSelect).toHaveBeenCalledWith('dev', {
