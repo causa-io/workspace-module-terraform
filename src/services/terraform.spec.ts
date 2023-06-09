@@ -171,6 +171,38 @@ describe('TerraformService', () => {
     });
   });
 
+  describe('fmt', () => {
+    it('should run the fmt command', async () => {
+      const expectedResult = { code: 0 };
+      terraformSpy.mockResolvedValueOnce(expectedResult);
+
+      const actualResult = await service.fmt();
+
+      expect(actualResult).toEqual(expectedResult);
+      expect(service.terraform).toHaveBeenCalledExactlyOnceWith('fmt', [], {});
+    });
+
+    it('should run the fmt command with arguments', async () => {
+      const expectedResult = { code: 0 };
+      terraformSpy.mockResolvedValueOnce(expectedResult);
+
+      const actualResult = await service.fmt({
+        check: true,
+        recursive: true,
+        targets: ['file1.tf', 'folder/'],
+      });
+
+      expect(actualResult).toEqual(expectedResult);
+      expect(service.terraform).toHaveBeenCalledOnce();
+      const [actualCommand, args] = terraformSpy.mock.calls[0];
+      const actualArgs = args.join(' ');
+      expect(actualCommand).toEqual('fmt');
+      expect(actualArgs).toContain('-check');
+      expect(actualArgs).toContain('-recursive');
+      expect(actualArgs).toEndWith('file1.tf folder/');
+    });
+  });
+
   describe('wrapWorkspaceOperation', () => {
     it('should select the workspace before running the function', async () => {
       const expectedResult = '✨';

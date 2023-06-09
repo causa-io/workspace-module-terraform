@@ -195,6 +195,47 @@ export class TerraformService {
   }
 
   /**
+   * Runs `terraform fmt`.
+   *
+   * @param options Options when running the command.
+   * @returns The result of the Terraform process.
+   */
+  async fmt(
+    options: {
+      /**
+       * Whether to check if the files are formatted correctly, instead of formatting them.
+       */
+      check?: boolean;
+
+      /**
+       * Whether to recursively format all files in the current directory and its subdirectories.
+       */
+      recursive?: boolean;
+
+      /**
+       * The list of files or directories to format.
+       */
+      targets?: string[];
+    } & SpawnOptions = {},
+  ): Promise<SpawnedProcessResult> {
+    const args: string[] = [];
+
+    if (options.check) {
+      args.push('-check');
+    }
+
+    if (options.recursive) {
+      args.push('-recursive');
+    }
+
+    if (options.targets) {
+      args.push(...options.targets);
+    }
+
+    return await this.terraform('fmt', args, options);
+  }
+
+  /**
    * Wrap the `fn` function and ensures Terraform is initialized and that the correct Terraform workspace is selected.
    * After `fn` has run, the workspace is reverted back to the previous workspace if necessary.
    *
