@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v0.2.0 (2023-06-09)
+
 Features:
 
 - Implement the `validate` and `fmt` method in the `TerraformService`.
