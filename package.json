@@ -30,7 +30,8 @@
   "dependencies": {
     "@causa/workspace": ">= 0.10.0 < 1.0.0",
     "@causa/workspace-core": ">= 0.7.0 < 1.0.0",
-    "pino": "^8.14.1"
+    "pino": "^8.14.1",
+    "semver": "^7.5.1"
   },
   "devDependencies": {
     "@tsconfig/node18": "^2.0.1",

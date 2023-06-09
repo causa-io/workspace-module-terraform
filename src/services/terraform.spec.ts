@@ -1,8 +1,13 @@
 import { WorkspaceContext } from '@causa/workspace';
-import { ProcessServiceExitCodeError } from '@causa/workspace-core';
+import {
+  ProcessService,
+  ProcessServiceExitCodeError,
+} from '@causa/workspace-core';
 import { createContext } from '@causa/workspace/testing';
 import { jest } from '@jest/globals';
 import 'jest-extended';
+import { major } from 'semver';
+import { IncompatibleTerraformVersionError } from './terraform.errors.js';
 import { TerraformService } from './terraform.js';
 
 describe('TerraformService', () => {
@@ -26,6 +31,47 @@ describe('TerraformService', () => {
 
       expect(actualResult.code).toEqual(0);
       expect(actualResult.stdout).toStartWith('Terraform v');
+    });
+
+    it('should throw if the configured Terraform version is not compatible', async () => {
+      ({ context } = createContext({
+        configuration: {
+          workspace: { name: '🏷️' },
+          terraform: { version: '9999.0.0' },
+        },
+      }));
+      service = context.service(TerraformService);
+
+      const actualPromise = service.terraform('-version', [], {});
+
+      await expect(actualPromise).rejects.toThrow(
+        IncompatibleTerraformVersionError,
+      );
+      expect(service.requiredVersion).toEqual('9999.0.0');
+    });
+
+    it('should validate a compatible Terraform version', async () => {
+      const terraformVersionResult = await context
+        .service(ProcessService)
+        .spawn('terraform', ['-version', '-json'], {
+          capture: { stdout: true },
+        }).result;
+      const currentTerraformVersion = JSON.parse(
+        terraformVersionResult.stdout ?? '',
+      ).terraform_version;
+      ({ context } = createContext({
+        configuration: {
+          workspace: { name: '🏷️' },
+          terraform: { version: `${major(currentTerraformVersion)}.0.0` },
+        },
+      }));
+      service = context.service(TerraformService);
+
+      const actualPromise = service.terraform('-version', [], {});
+
+      await expect(actualPromise).toResolve();
+      expect((service as any).terraformVersionCheck).toBeDefined();
+      expect((service as any).hasCompatibleTerraformVersion).toBeTrue();
     });
   });
 
