@@ -6,7 +6,9 @@ import {
   SpawnedProcessResult,
 } from '@causa/workspace-core';
 import { Logger } from 'pino';
+import { satisfies } from 'semver';
 import { TerraformConfiguration } from '../configurations/index.js';
+import { IncompatibleTerraformVersionError } from './terraform.errors.js';
 
 /**
  * Options for the {@link TerraformService.wrapWorkspaceOperation} method.
@@ -54,15 +56,21 @@ export class TerraformService {
    */
   private readonly defaultTerraformWorkspace: string | undefined;
 
+  /**
+   * The required Terraform version set in the configuration.
+   * Defaults to `latest`.
+   */
+  readonly requiredVersion: string;
+
   constructor(context: WorkspaceContext) {
     this.processService = context.service(ProcessService);
     this.defaultSpawnOptions = {
       workingDirectory: context.projectPath ?? undefined,
     };
     this.logger = context.logger;
-    this.defaultTerraformWorkspace = context
-      .asConfiguration<TerraformConfiguration>()
-      .get('terraform.workspace');
+    const conf = context.asConfiguration<TerraformConfiguration>();
+    this.defaultTerraformWorkspace = conf.get('terraform.workspace');
+    this.requiredVersion = conf.get('terraform.version') ?? 'latest';
   }
 
   /**
@@ -322,10 +330,67 @@ export class TerraformService {
     args: string[],
     options: SpawnOptions = {},
   ): Promise<SpawnedProcessResult> {
+    await this.checkTerraformVersion();
+
     const p = this.processService.spawn('terraform', [command, ...args], {
       ...this.defaultSpawnOptions,
       ...options,
     });
     return await p.result;
+  }
+
+  /**
+   * Whether the installed Terraform version is compatible with the required version set in the configuration.
+   * It is `undefined` before the first call to {@link TerraformService.checkTerraformVersion}.
+   */
+  private hasCompatibleTerraformVersion: boolean | undefined;
+
+  /**
+   * A promise that resolves when the installed Terraform version has been checked.
+   * It is `undefined` before the first call to {@link TerraformService.checkTerraformVersion}, or if the actual check
+   * is not needed.
+   */
+  private terraformVersionCheck: Promise<void> | undefined;
+
+  /**
+   * Checks whether the installed Terraform version is compatible with the required version set in the configuration.
+   * If the required version is `latest`, the check is skipped.
+   * If the installed version is not compatible, an {@link IncompatibleTerraformVersionError} is thrown.
+   * The result of the check is cached, and this returns synchronously on subsequent calls.
+   */
+  private async checkTerraformVersion(): Promise<void> {
+    if (this.hasCompatibleTerraformVersion === true) {
+      return;
+    }
+
+    if (this.requiredVersion === 'latest') {
+      this.hasCompatibleTerraformVersion = true;
+      return;
+    }
+
+    if (!this.terraformVersionCheck) {
+      this.terraformVersionCheck = (async () => {
+        const result = await this.processService.spawn(
+          'terraform',
+          ['-version', '-json'],
+          { capture: { stdout: true } },
+        ).result;
+        const version = JSON.parse(result.stdout ?? '').terraform_version;
+
+        this.hasCompatibleTerraformVersion = satisfies(
+          version,
+          `^${this.requiredVersion}`,
+        );
+
+        if (!this.hasCompatibleTerraformVersion) {
+          throw new IncompatibleTerraformVersionError(
+            version,
+            this.requiredVersion,
+          );
+        }
+      })();
+    }
+
+    await this.terraformVersionCheck;
   }
 }
