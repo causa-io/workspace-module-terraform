@@ -34,14 +34,17 @@ describe('InfrastructureDeployForTerraform', () => {
       deployment: '/plan.out',
     });
 
-    expect(terraformService.init).toHaveBeenCalledOnceWith({});
-    expect(terraformService.workspaceShow).toHaveBeenCalledOnceWith({});
+    expect(terraformService.init).toHaveBeenCalledExactlyOnceWith({});
+    expect(terraformService.workspaceShow).toHaveBeenCalledExactlyOnceWith({});
     expect(terraformService.workspaceSelect).toHaveBeenCalledWith('dev', {
       orCreate: undefined,
     });
-    expect(terraformService.apply).toHaveBeenCalledOnceWith('/plan.out', {
-      logging: 'info',
-    });
+    expect(terraformService.apply).toHaveBeenCalledExactlyOnceWith(
+      '/plan.out',
+      {
+        logging: 'info',
+      },
+    );
     expect(terraformService.workspaceSelect).toHaveBeenCalledWith('other', {});
   });
 

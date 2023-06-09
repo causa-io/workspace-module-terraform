@@ -157,6 +157,52 @@ describe('TerraformService', () => {
     });
   });
 
+  describe('validate', () => {
+    it('should run the validate command', async () => {
+      terraformSpy.mockResolvedValueOnce({ code: 0 });
+
+      await service.validate();
+
+      expect(service.terraform).toHaveBeenCalledExactlyOnceWith(
+        'validate',
+        [],
+        {},
+      );
+    });
+  });
+
+  describe('fmt', () => {
+    it('should run the fmt command', async () => {
+      const expectedResult = { code: 0 };
+      terraformSpy.mockResolvedValueOnce(expectedResult);
+
+      const actualResult = await service.fmt();
+
+      expect(actualResult).toEqual(expectedResult);
+      expect(service.terraform).toHaveBeenCalledExactlyOnceWith('fmt', [], {});
+    });
+
+    it('should run the fmt command with arguments', async () => {
+      const expectedResult = { code: 0 };
+      terraformSpy.mockResolvedValueOnce(expectedResult);
+
+      const actualResult = await service.fmt({
+        check: true,
+        recursive: true,
+        targets: ['file1.tf', 'folder/'],
+      });
+
+      expect(actualResult).toEqual(expectedResult);
+      expect(service.terraform).toHaveBeenCalledOnce();
+      const [actualCommand, args] = terraformSpy.mock.calls[0];
+      const actualArgs = args.join(' ');
+      expect(actualCommand).toEqual('fmt');
+      expect(actualArgs).toContain('-check');
+      expect(actualArgs).toContain('-recursive');
+      expect(actualArgs).toEndWith('file1.tf folder/');
+    });
+  });
+
   describe('wrapWorkspaceOperation', () => {
     it('should select the workspace before running the function', async () => {
       const expectedResult = '✨';
@@ -176,8 +222,10 @@ describe('TerraformService', () => {
       );
 
       expect(actualResult).toEqual(expectedResult);
-      expect(service.init).toHaveBeenCalledOnceWith(expectedSpawnOptions);
-      expect(service.workspaceShow).toHaveBeenCalledOnceWith(
+      expect(service.init).toHaveBeenCalledExactlyOnceWith(
+        expectedSpawnOptions,
+      );
+      expect(service.workspaceShow).toHaveBeenCalledExactlyOnceWith(
         expectedSpawnOptions,
       );
       expect(service.workspaceSelect).toHaveBeenCalledWith('new', {
@@ -205,8 +253,10 @@ describe('TerraformService', () => {
       );
 
       expect(actualResult).toEqual(expectedResult);
-      expect(service.init).toHaveBeenCalledOnceWith(expectedSpawnOptions);
-      expect(service.workspaceShow).toHaveBeenCalledOnceWith(
+      expect(service.init).toHaveBeenCalledExactlyOnceWith(
+        expectedSpawnOptions,
+      );
+      expect(service.workspaceShow).toHaveBeenCalledExactlyOnceWith(
         expectedSpawnOptions,
       );
       expect(service.workspaceSelect).not.toHaveBeenCalled();
@@ -229,8 +279,10 @@ describe('TerraformService', () => {
       );
 
       await expect(actualPromise).rejects.toThrowError(expectedError);
-      expect(service.init).toHaveBeenCalledOnceWith(expectedSpawnOptions);
-      expect(service.workspaceShow).toHaveBeenCalledOnceWith(
+      expect(service.init).toHaveBeenCalledExactlyOnceWith(
+        expectedSpawnOptions,
+      );
+      expect(service.workspaceShow).toHaveBeenCalledExactlyOnceWith(
         expectedSpawnOptions,
       );
       expect(service.workspaceSelect).toHaveBeenCalledWith('dev', {
@@ -242,6 +294,23 @@ describe('TerraformService', () => {
         'other',
         expectedSpawnOptions,
       );
+    });
+
+    it('should throw if no workspace is configured', async () => {
+      ({ context } = createContext({}));
+      service = context.service(TerraformService);
+      terraformSpy = jest
+        .spyOn(service, 'terraform')
+        .mockResolvedValue({ code: 0 });
+      const fn = jest.fn(() => Promise.resolve());
+
+      const actualPromise = service.wrapWorkspaceOperation({}, fn);
+
+      await expect(actualPromise).rejects.toThrow(
+        'The Terraform workspace for the operation is not configured.',
+      );
+      expect(fn).not.toHaveBeenCalled();
+      expect(service.terraform).not.toHaveBeenCalled();
     });
   });
 });

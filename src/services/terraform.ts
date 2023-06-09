@@ -52,7 +52,7 @@ export class TerraformService {
    * The default Terraform workspace, obtained from the configuration at `terraform.workspace`.
    * This is used by {@link TerraformService.wrapWorkspaceOperation} if no workspace is specified.
    */
-  private readonly defaultTerraformWorkspace: string;
+  private readonly defaultTerraformWorkspace: string | undefined;
 
   constructor(context: WorkspaceContext) {
     this.processService = context.service(ProcessService);
@@ -62,7 +62,7 @@ export class TerraformService {
     this.logger = context.logger;
     this.defaultTerraformWorkspace = context
       .asConfiguration<TerraformConfiguration>()
-      .getOrThrow('terraform.workspace');
+      .get('terraform.workspace');
   }
 
   /**
@@ -186,6 +186,56 @@ export class TerraformService {
   }
 
   /**
+   * Runs `terraform validate`.
+   *
+   * @param options Options when running the command.
+   */
+  async validate(options: SpawnOptions = {}): Promise<void> {
+    await this.terraform('validate', [], options);
+  }
+
+  /**
+   * Runs `terraform fmt`.
+   *
+   * @param options Options when running the command.
+   * @returns The result of the Terraform process.
+   */
+  async fmt(
+    options: {
+      /**
+       * Whether to check if the files are formatted correctly, instead of formatting them.
+       */
+      check?: boolean;
+
+      /**
+       * Whether to recursively format all files in the current directory and its subdirectories.
+       */
+      recursive?: boolean;
+
+      /**
+       * The list of files or directories to format.
+       */
+      targets?: string[];
+    } & SpawnOptions = {},
+  ): Promise<SpawnedProcessResult> {
+    const args: string[] = [];
+
+    if (options.check) {
+      args.push('-check');
+    }
+
+    if (options.recursive) {
+      args.push('-recursive');
+    }
+
+    if (options.targets) {
+      args.push(...options.targets);
+    }
+
+    return await this.terraform('fmt', args, options);
+  }
+
+  /**
    * Wrap the `fn` function and ensures Terraform is initialized and that the correct Terraform workspace is selected.
    * After `fn` has run, the workspace is reverted back to the previous workspace if necessary.
    *
@@ -217,11 +267,17 @@ export class TerraformService {
     const { skipInit, createWorkspaceIfNeeded, workspace, ...spawnOptions } =
       options;
 
+    const workspaceToSelect = workspace ?? this.defaultTerraformWorkspace;
+    if (workspaceToSelect === undefined) {
+      throw new Error(
+        'The Terraform workspace for the operation is not configured.',
+      );
+    }
+
     if (!skipInit) {
       await this.init(spawnOptions);
     }
 
-    const workspaceToSelect = workspace ?? this.defaultTerraformWorkspace;
     let workspaceToRestore: string | null = null;
 
     try {

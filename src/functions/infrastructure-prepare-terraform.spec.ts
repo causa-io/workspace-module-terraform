@@ -52,12 +52,12 @@ describe('InfrastructurePrepareForTerraform', () => {
       output: '/plan.out',
       isDeploymentNeeded: false,
     });
-    expect(terraformService.init).toHaveBeenCalledOnceWith({});
-    expect(terraformService.workspaceShow).toHaveBeenCalledOnceWith({});
+    expect(terraformService.init).toHaveBeenCalledExactlyOnceWith({});
+    expect(terraformService.workspaceShow).toHaveBeenCalledExactlyOnceWith({});
     expect(terraformService.workspaceSelect).toHaveBeenCalledWith('dev', {
       orCreate: true,
     });
-    expect(terraformService.plan).toHaveBeenCalledOnceWith('/plan.out', {
+    expect(terraformService.plan).toHaveBeenCalledExactlyOnceWith('/plan.out', {
       variables: {
         my_normal_var: '🤖',
         my_template_var: '🏷️',
@@ -77,18 +77,23 @@ describe('InfrastructurePrepareForTerraform', () => {
       output: expectedOutput,
       isDeploymentNeeded: true,
     });
-    expect(terraformService.init).toHaveBeenCalledOnceWith({});
-    expect(terraformService.workspaceShow).toHaveBeenCalledOnceWith({});
+    expect(terraformService.init).toHaveBeenCalledExactlyOnceWith({});
+    expect(terraformService.workspaceShow).toHaveBeenCalledExactlyOnceWith({});
     expect(terraformService.workspaceSelect).toHaveBeenCalledWith('dev', {
       orCreate: true,
     });
-    expect(terraformService.plan).toHaveBeenCalledOnceWith(expectedOutput, {
-      variables: {
-        my_normal_var: '🤖',
-        my_template_var: '🏷️',
+    expect(terraformService.plan).toHaveBeenCalledExactlyOnceWith(
+      expectedOutput,
+      {
+        variables: {
+          my_normal_var: '🤖',
+          my_template_var: '🏷️',
+        },
       },
-    });
-    expect(terraformService.show).toHaveBeenCalledOnceWith(expectedOutput);
+    );
+    expect(terraformService.show).toHaveBeenCalledExactlyOnceWith(
+      expectedOutput,
+    );
     expect(terraformService.workspaceSelect).toHaveBeenCalledWith('other', {});
   });
 
