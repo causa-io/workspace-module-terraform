@@ -5,6 +5,7 @@
 Features:
 
 - Support the `--destroy` option for the `infrastructure prepare` command.
+- Support the `dependencies update` command (`ProjectDependenciesUpdate` function).
 
 ## v0.2.0 (2023-06-09)
 

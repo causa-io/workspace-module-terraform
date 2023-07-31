@@ -33,3 +33,4 @@ The Terraform module also supports some of the project-level commands, namely:
 
 - `cs init`: Runs `terraform init`.
 - `cs lint`: Runs `terraform validate` and `terraform fmt`. The format operation is run with the `-check` argument, such that it only lints the code without fixing it. This operation applies supports the `project.additionalDirectories` configuration.
+- `cs dependencies update`: Runs `terraform init` with the `-upgrade` option, allowing the update of dependencies and the lock file.

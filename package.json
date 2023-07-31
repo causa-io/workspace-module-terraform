@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@causa/workspace": ">= 0.12.0 < 1.0.0",
-    "@causa/workspace-core": ">= 0.10.0 < 1.0.0",
+    "@causa/workspace-core": ">= 0.11.0 < 1.0.0",
     "pino": "^8.14.2",
     "semver": "^7.5.4"
   },
