@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v0.3.0 (2023-07-31)
+
 Features:
 
 - Support the `--destroy` option for the `infrastructure prepare` command.
