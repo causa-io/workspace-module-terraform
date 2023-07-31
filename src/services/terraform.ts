@@ -78,8 +78,21 @@ export class TerraformService {
    *
    * @param options Options when initializing Terraform.
    */
-  async init(options: SpawnOptions = {}): Promise<void> {
-    await this.terraform('init', ['-input=false'], options);
+  async init(
+    options: {
+      /**
+       * Upgrades the module and provider versions during initialization, instead of using the lockfile.
+       */
+      upgrade?: boolean;
+    } & SpawnOptions = {},
+  ): Promise<void> {
+    const args: string[] = ['-input=false'];
+
+    if (options.upgrade) {
+      args.push('-upgrade');
+    }
+
+    await this.terraform('init', args, options);
   }
 
   /**
@@ -105,7 +118,12 @@ export class TerraformService {
    */
   async workspaceSelect(
     workspace: string,
-    options: { orCreate?: boolean } & SpawnOptions = {},
+    options: {
+      /**
+       * Creates the workspace if it does not already exists.
+       */
+      orCreate?: boolean;
+    } & SpawnOptions = {},
   ): Promise<void> {
     const { orCreate, ...spawnOptions } = options;
     await this.terraform(

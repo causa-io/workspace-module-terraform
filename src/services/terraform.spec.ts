@@ -87,6 +87,19 @@ describe('TerraformService', () => {
       expect(actualCommand).toEqual('init');
       expect(actualArgs).toContain('-input=false');
     });
+
+    it('should set the upgrade option', async () => {
+      terraformSpy.mockResolvedValueOnce({ code: 0 });
+
+      await service.init({ upgrade: true });
+
+      expect(service.terraform).toHaveBeenCalledOnce();
+      const [actualCommand, args] = terraformSpy.mock.calls[0];
+      const actualArgs = args.join(' ');
+      expect(actualCommand).toEqual('init');
+      expect(actualArgs).toContain('-upgrade');
+      expect(actualArgs).toContain('-input=false');
+    });
   });
 
   describe('workspaceShow', () => {
