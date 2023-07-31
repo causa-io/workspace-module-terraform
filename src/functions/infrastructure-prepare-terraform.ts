@@ -32,8 +32,8 @@ export class InfrastructurePrepareForTerraform extends InfrastructurePrepare {
     );
 
     const isDeploymentNeeded = await terraformService.wrapWorkspaceOperation(
-      { createWorkspaceIfNeeded: true },
-      () => terraformService.plan(output, { variables }),
+      { createWorkspaceIfNeeded: !this.destroy },
+      () => terraformService.plan(output, { variables, destroy: this.destroy }),
     );
 
     if (isDeploymentNeeded) {

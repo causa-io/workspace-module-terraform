@@ -66,6 +66,34 @@ describe('InfrastructurePrepareForTerraform', () => {
     expect(terraformService.workspaceSelect).toHaveBeenCalledWith('other', {});
   });
 
+  it('should plan the destruction', async () => {
+    planMock.mockReset();
+    planMock.mockResolvedValueOnce(true);
+
+    const actualResult = await context.call(InfrastructurePrepare, {
+      output: '/plan.out',
+      destroy: true,
+    });
+
+    expect(actualResult).toEqual({
+      output: '/plan.out',
+      isDeploymentNeeded: true,
+    });
+    expect(terraformService.init).toHaveBeenCalledExactlyOnceWith({});
+    expect(terraformService.workspaceShow).toHaveBeenCalledExactlyOnceWith({});
+    expect(terraformService.workspaceSelect).toHaveBeenCalledWith('dev', {
+      orCreate: false,
+    });
+    expect(terraformService.plan).toHaveBeenCalledExactlyOnceWith('/plan.out', {
+      variables: {
+        my_normal_var: '🤖',
+        my_template_var: '🏷️',
+      },
+      destroy: true,
+    });
+    expect(terraformService.workspaceSelect).toHaveBeenCalledWith('other', {});
+  });
+
   it('should print the plan and use the default plan file location', async () => {
     const expectedOutput = resolve('plan.out');
 
