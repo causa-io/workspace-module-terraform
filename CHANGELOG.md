@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v0.3.1 (2023-08-01)
+
 Chores:
 
 - Adapt to breaking change in `@causa/workspace-core` (`ProjectDependenciesUpdate`).
