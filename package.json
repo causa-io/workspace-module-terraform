@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@causa/workspace": ">= 0.12.0 < 1.0.0",
-    "@causa/workspace-core": ">= 0.11.0 < 1.0.0",
+    "@causa/workspace-core": ">= 0.12.0 < 1.0.0",
     "pino": "^8.14.2",
     "semver": "^7.5.4"
   },
@@ -37,7 +37,7 @@
     "@tsconfig/node18": "^18.2.0",
     "@types/jest": "^29.5.3",
     "@types/node": "^18.17.1",
-    "@typescript-eslint/eslint-plugin": "^6.2.0",
+    "@typescript-eslint/eslint-plugin": "^6.2.1",
     "eslint": "^8.46.0",
     "eslint-config-prettier": "^8.9.0",
     "eslint-plugin-prettier": "^5.0.0",

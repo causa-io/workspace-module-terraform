@@ -8,7 +8,7 @@ import { TerraformService } from '../services/index.js';
  * updates the lock file accordingly.
  */
 export class ProjectDependenciesUpdateForTerraform extends ProjectDependenciesUpdate {
-  async _call(context: WorkspaceContext): Promise<void> {
+  async _call(context: WorkspaceContext): Promise<boolean> {
     context.logger.info('⬆️ Updating Terraform dependencies.');
 
     await context
@@ -16,6 +16,8 @@ export class ProjectDependenciesUpdateForTerraform extends ProjectDependenciesUp
       .init({ upgrade: true, logging: 'debug' });
 
     context.logger.info(`️✅ Successfully updated Terraform dependencies.`);
+
+    return true;
   }
 
   _supports(context: WorkspaceContext): boolean {

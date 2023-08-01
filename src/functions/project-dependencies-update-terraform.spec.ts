@@ -38,8 +38,9 @@ describe('ProjectDependenciesUpdateForTerraform', () => {
   });
 
   it('should run terraform init with the upgrade option', async () => {
-    await context.call(ProjectDependenciesUpdate, {});
+    const actualDidUpdate = await context.call(ProjectDependenciesUpdate, {});
 
+    expect(actualDidUpdate).toBeTrue();
     expect(terraformService.init).toHaveBeenCalledExactlyOnceWith({
       upgrade: true,
       logging: 'debug',
