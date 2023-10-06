@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+Breaking changes:
+
+- When the plan file location is not specified in `cs infrastructure prepare`, it now defaults to a `plan.out` file in the project's directory.
+- When the prepared plan contains no change, the plan file is removed from the output location.
+- The plan file is removed after a successful `cs infrastructure deploy`.
+
 ## v0.3.1 (2023-08-01)
 
 Chores:
