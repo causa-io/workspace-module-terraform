@@ -4,6 +4,7 @@ import {
   InfrastructurePrepare,
   PrepareResult,
 } from '@causa/workspace-core';
+import { rm } from 'fs/promises';
 import { resolve } from 'path';
 import { TerraformService } from '../services/index.js';
 
@@ -48,11 +49,14 @@ export class InfrastructurePrepareForTerraform extends InfrastructurePrepare {
         const show = await terraformService.show(output);
         console.log(show);
       }
-    } else {
-      context.logger.info('🧱 Terraform plan has no change.');
+
+      return { output, isDeploymentNeeded };
     }
 
-    return { output, isDeploymentNeeded };
+    context.logger.info('🧱 Terraform plan has no change.');
+    await rm(output);
+
+    return { output: '', isDeploymentNeeded };
   }
 
   _supports(context: WorkspaceContext): boolean {

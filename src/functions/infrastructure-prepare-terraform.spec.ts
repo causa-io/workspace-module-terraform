@@ -3,6 +3,7 @@ import { InfrastructurePrepare } from '@causa/workspace-core';
 import { NoImplementationFoundError } from '@causa/workspace/function-registry';
 import { createContext } from '@causa/workspace/testing';
 import { jest } from '@jest/globals';
+import { mkdtemp, rm, stat, writeFile } from 'fs/promises';
 import 'jest-extended';
 import { resolve } from 'path';
 import { TerraformService } from '../services/index.js';
@@ -12,8 +13,10 @@ describe('InfrastructurePrepareForTerraform', () => {
   let context: WorkspaceContext;
   let terraformService: TerraformService;
   let planMock: jest.SpiedFunction<TerraformService['plan']>;
+  let tmpDir: string;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    tmpDir = resolve(await mkdtemp('causa-test-'));
     ({ context } = createContext({
       rootPath: '/some',
       projectPath: '/some/project/path',
@@ -43,17 +46,18 @@ describe('InfrastructurePrepareForTerraform', () => {
     jest.spyOn(terraformService, 'show').mockResolvedValueOnce('🗺️');
   });
 
-  it('should render variables and call terraform plan', async () => {
-    planMock.mockReset();
-    planMock.mockResolvedValueOnce(false);
+  afterEach(async () => {
+    await rm(tmpDir, { recursive: true, force: true });
+  });
 
+  it('should render variables and call terraform plan', async () => {
     const actualResult = await context.call(InfrastructurePrepare, {
       output: '/plan.out',
     });
 
     expect(actualResult).toEqual({
       output: '/plan.out',
-      isDeploymentNeeded: false,
+      isDeploymentNeeded: true,
     });
     expect(terraformService.init).toHaveBeenCalledExactlyOnceWith({});
     expect(terraformService.workspaceShow).toHaveBeenCalledExactlyOnceWith({});
@@ -66,13 +70,11 @@ describe('InfrastructurePrepareForTerraform', () => {
         my_template_var: '🏷️',
       },
     });
+    expect(terraformService.show).not.toHaveBeenCalled();
     expect(terraformService.workspaceSelect).toHaveBeenCalledWith('other', {});
   });
 
   it('should plan the destruction', async () => {
-    planMock.mockReset();
-    planMock.mockResolvedValueOnce(true);
-
     const actualResult = await context.call(InfrastructurePrepare, {
       output: '/plan.out',
       destroy: true,
@@ -94,6 +96,7 @@ describe('InfrastructurePrepareForTerraform', () => {
       },
       destroy: true,
     });
+    expect(terraformService.show).not.toHaveBeenCalled();
     expect(terraformService.workspaceSelect).toHaveBeenCalledWith('other', {});
   });
 
@@ -126,6 +129,38 @@ describe('InfrastructurePrepareForTerraform', () => {
       expectedOutput,
     );
     expect(terraformService.workspaceSelect).toHaveBeenCalledWith('other', {});
+  });
+
+  it('should remove the plan file if no deployment is needed', async () => {
+    const output = resolve(tmpDir, 'plan.out');
+    planMock.mockReset();
+    planMock.mockImplementationOnce(async () => {
+      await writeFile(output, '🗺️');
+      return false;
+    });
+
+    const actualResult = await context.call(InfrastructurePrepare, {
+      output,
+    });
+
+    expect(actualResult).toEqual({
+      output: '',
+      isDeploymentNeeded: false,
+    });
+    expect(terraformService.init).toHaveBeenCalledExactlyOnceWith({});
+    expect(terraformService.workspaceShow).toHaveBeenCalledExactlyOnceWith({});
+    expect(terraformService.workspaceSelect).toHaveBeenCalledWith('dev', {
+      orCreate: true,
+    });
+    expect(terraformService.plan).toHaveBeenCalledExactlyOnceWith(output, {
+      variables: {
+        my_normal_var: '🤖',
+        my_template_var: '🏷️',
+      },
+    });
+    expect(terraformService.show).not.toHaveBeenCalled();
+    expect(terraformService.workspaceSelect).toHaveBeenCalledWith('other', {});
+    expect(stat(output)).rejects.toThrow('ENOENT');
   });
 
   it('should not handle non-terraform projects', async () => {
