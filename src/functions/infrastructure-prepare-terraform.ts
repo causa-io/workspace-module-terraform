@@ -2,7 +2,9 @@ import { WorkspaceContext } from '@causa/workspace';
 import {
   InfrastructureConfiguration,
   InfrastructurePrepare,
+  PrepareResult,
 } from '@causa/workspace-core';
+import { rm } from 'fs/promises';
 import { resolve } from 'path';
 import { TerraformService } from '../services/index.js';
 
@@ -16,8 +18,8 @@ const DEFAULT_PLAN_FILE = 'plan.out';
  * This calls the `terraform plan` command for the given project.
  */
 export class InfrastructurePrepareForTerraform extends InfrastructurePrepare {
-  async _call(context: WorkspaceContext) {
-    context.getProjectPathOrThrow();
+  async _call(context: WorkspaceContext): Promise<PrepareResult> {
+    const projectPath = context.getProjectPathOrThrow();
     const infrastructureConf =
       context.asConfiguration<InfrastructureConfiguration>();
     const projectName = infrastructureConf.getOrThrow('project.name');
@@ -25,7 +27,9 @@ export class InfrastructurePrepareForTerraform extends InfrastructurePrepare {
 
     const variables =
       (await infrastructureConf.getAndRender('infrastructure.variables')) ?? {};
-    const output = resolve(this.output ?? DEFAULT_PLAN_FILE);
+    const output = this.output
+      ? resolve(this.output)
+      : resolve(projectPath, DEFAULT_PLAN_FILE);
 
     context.logger.info(
       `🧱 Planning Terraform deployment for project '${projectName}'.`,
@@ -45,11 +49,14 @@ export class InfrastructurePrepareForTerraform extends InfrastructurePrepare {
         const show = await terraformService.show(output);
         console.log(show);
       }
-    } else {
-      context.logger.info('🧱 Terraform plan has no change.');
+
+      return { output, isDeploymentNeeded };
     }
 
-    return { output, isDeploymentNeeded };
+    context.logger.info('🧱 Terraform plan has no change.');
+    await rm(output);
+
+    return { output: '', isDeploymentNeeded };
   }
 
   _supports(context: WorkspaceContext): boolean {

@@ -3,15 +3,19 @@ import { InfrastructureDeploy } from '@causa/workspace-core';
 import { NoImplementationFoundError } from '@causa/workspace/function-registry';
 import { createContext } from '@causa/workspace/testing';
 import { jest } from '@jest/globals';
+import { mkdtemp, rm, stat, writeFile } from 'fs/promises';
 import 'jest-extended';
+import { resolve } from 'path';
 import { TerraformService } from '../services/index.js';
 import { InfrastructureDeployForTerraform } from './infrastructure-deploy-terraform.js';
 
 describe('InfrastructureDeployForTerraform', () => {
   let context: WorkspaceContext;
   let terraformService: TerraformService;
+  let tmpDir: string;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    tmpDir = resolve(await mkdtemp('causa-test-'));
     ({ context } = createContext({
       configuration: {
         workspace: { name: '🏷️' },
@@ -29,23 +33,26 @@ describe('InfrastructureDeployForTerraform', () => {
     jest.spyOn(terraformService, 'apply').mockResolvedValueOnce();
   });
 
-  it('should call terraform apply', async () => {
-    await context.call(InfrastructureDeploy, {
-      deployment: '/plan.out',
-    });
+  afterEach(async () => {
+    await rm(tmpDir, { recursive: true, force: true });
+  });
+
+  it('should call terraform apply and remove the plan file', async () => {
+    const deployment = resolve(tmpDir, 'plan.out');
+    await writeFile(deployment, '📄');
+
+    await context.call(InfrastructureDeploy, { deployment });
 
     expect(terraformService.init).toHaveBeenCalledExactlyOnceWith({});
     expect(terraformService.workspaceShow).toHaveBeenCalledExactlyOnceWith({});
     expect(terraformService.workspaceSelect).toHaveBeenCalledWith('dev', {
       orCreate: undefined,
     });
-    expect(terraformService.apply).toHaveBeenCalledExactlyOnceWith(
-      '/plan.out',
-      {
-        logging: 'info',
-      },
-    );
+    expect(terraformService.apply).toHaveBeenCalledExactlyOnceWith(deployment, {
+      logging: 'info',
+    });
     expect(terraformService.workspaceSelect).toHaveBeenCalledWith('other', {});
+    expect(stat(deployment)).rejects.toThrow('ENOENT');
   });
 
   it('should not handle non-terraform projects', async () => {
