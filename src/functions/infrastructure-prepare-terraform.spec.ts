@@ -15,6 +15,9 @@ describe('InfrastructurePrepareForTerraform', () => {
 
   beforeEach(() => {
     ({ context } = createContext({
+      rootPath: '/some',
+      projectPath: '/some/project/path',
+      workingDirectory: '/some/project/path/nested',
       configuration: {
         workspace: { name: '🏷️' },
         project: { name: '🏗️', type: 'infrastructure', language: 'terraform' },
@@ -95,7 +98,7 @@ describe('InfrastructurePrepareForTerraform', () => {
   });
 
   it('should print the plan and use the default plan file location', async () => {
-    const expectedOutput = resolve('plan.out');
+    const expectedOutput = resolve(context.projectPath ?? '', 'plan.out');
 
     const actualResult = await context.call(InfrastructurePrepare, {
       print: true,
