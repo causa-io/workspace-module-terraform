@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v0.4.0 (2023-10-06)
+
 Breaking changes:
 
 - When the plan file location is not specified in `cs infrastructure prepare`, it now defaults to a `plan.out` file in the project's directory.
