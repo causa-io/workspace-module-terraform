@@ -1,5 +1,6 @@
 import { WorkspaceContext } from '@causa/workspace';
 import { InfrastructureDeploy } from '@causa/workspace-core';
+import { rm } from 'fs/promises';
 import { resolve } from 'path';
 import { TerraformService } from '../services/index.js';
 
@@ -24,6 +25,8 @@ export class InfrastructureDeployForTerraform extends InfrastructureDeploy {
     );
 
     context.logger.info('🧱 Successfully applied Terraform plan.');
+
+    await rm(plan);
   }
 
   _supports(context: WorkspaceContext): boolean {
