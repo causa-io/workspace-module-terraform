@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+Breaking change:
+
+- Drop support for Node.js 16.
+
+Chore:
+
+- Upgrade dependencies.
+
 ## v0.4.0 (2023-10-06)
 
 Breaking changes:
