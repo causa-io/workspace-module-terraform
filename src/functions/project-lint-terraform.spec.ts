@@ -6,7 +6,7 @@ import {
 import { NoImplementationFoundError } from '@causa/workspace/function-registry';
 import { createContext } from '@causa/workspace/testing';
 import { jest } from '@jest/globals';
-import { mkdir, mkdtemp, rm } from 'fs/promises';
+import { mkdir, mkdtemp, rm, writeFile } from 'fs/promises';
 import 'jest-extended';
 import { join, resolve } from 'path';
 import { TerraformService } from '../services/index.js';
@@ -20,6 +20,14 @@ describe('ProjectLintForTerraform', () => {
 
   beforeEach(async () => {
     tmpDir = resolve(await mkdtemp('causa-test-'));
+    initContext();
+  });
+
+  afterEach(async () => {
+    await rm(tmpDir, { recursive: true, force: true });
+  });
+
+  function initContext(options: Parameters<typeof createContext>[0] = {}) {
     ({ context } = createContext({
       projectPath: tmpDir,
       configuration: {
@@ -27,24 +35,20 @@ describe('ProjectLintForTerraform', () => {
         project: { name: '🏗️', type: 'infrastructure', language: 'terraform' },
       },
       functions: [ProjectLintForTerraform],
+      ...options,
     }));
     terraformService = context.service(TerraformService);
     jest.spyOn(terraformService, 'fmt').mockResolvedValue({ code: 0 });
     validateMock = jest.spyOn(terraformService, 'validate').mockResolvedValue();
-  });
-
-  afterEach(async () => {
-    await rm(tmpDir, { recursive: true, force: true });
-  });
+  }
 
   it('should not handle non-terraform projects', async () => {
-    ({ context } = createContext({
+    initContext({
       configuration: {
         workspace: { name: '🏷️' },
         project: { name: '🏗️', type: 'infrastructure', language: 'python' },
       },
-      functions: [ProjectLintForTerraform],
-    }));
+    });
 
     expect(() => context.call(ProjectLint, {})).toThrow(
       NoImplementationFoundError,
@@ -65,12 +69,18 @@ describe('ProjectLintForTerraform', () => {
     });
   });
 
-  it('should call fmt with additional paths', async () => {
+  it('should call fmt with additional targets', async () => {
     const projectPath = join(tmpDir, 'project');
+    const matchingFolder = join(tmpDir, 'other', 'sub', 'folder');
+    const matchingFile = join(tmpDir, 'other', 'sub', 'file.tf');
+    const notMatchingFolder = join(tmpDir, 'not-this-one');
     await mkdir(projectPath, { recursive: true });
-    await mkdir(join(tmpDir, 'other', 'sub', 'folder'), { recursive: true });
-    await mkdir(join(tmpDir, 'not-this-one'), { recursive: true });
-    ({ context } = createContext({
+    await mkdir(matchingFolder, { recursive: true });
+    await mkdir(notMatchingFolder, { recursive: true });
+    await writeFile(matchingFile, '📄');
+    await writeFile(join(matchingFolder, 'other.nope'), '📄');
+    await writeFile(join(notMatchingFolder, 'file.tf'), '📄');
+    initContext({
       rootPath: tmpDir,
       projectPath,
       configuration: {
@@ -79,14 +89,10 @@ describe('ProjectLintForTerraform', () => {
           name: '🏗️',
           type: 'infrastructure',
           language: 'terraform',
-          externalFiles: ['other/*'],
+          externalFiles: ['other/'],
         },
       },
-      functions: [ProjectLintForTerraform],
-    }));
-    terraformService = context.service(TerraformService);
-    jest.spyOn(terraformService, 'fmt').mockResolvedValue({ code: 0 });
-    jest.spyOn(terraformService, 'validate').mockResolvedValue();
+    });
 
     await context.call(ProjectLint, {});
 
@@ -97,10 +103,7 @@ describe('ProjectLintForTerraform', () => {
       check: true,
       recursive: true,
       logging: 'info',
-      targets: expect.arrayContaining([
-        projectPath,
-        join(tmpDir, 'other', 'sub'),
-      ]),
+      targets: expect.toContainAllValues([projectPath, matchingFile]),
     });
   });
 
