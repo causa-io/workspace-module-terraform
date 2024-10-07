@@ -15,10 +15,10 @@ export class ProjectLintForTerraform extends ProjectLint {
     const projectPath = context.getProjectPathOrThrow();
     const projectName = context.get('project.name');
     const terraformService = context.service(TerraformService);
-    const targets = [
-      projectPath,
-      ...(await context.getProjectAdditionalDirectories()),
-    ];
+    const externalPaths = await context.getProjectExternalPaths({
+      onlyDirectories: true,
+    });
+    const targets = [projectPath, ...externalPaths];
 
     try {
       context.logger.info(
