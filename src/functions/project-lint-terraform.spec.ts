@@ -79,8 +79,8 @@ describe('ProjectLintForTerraform', () => {
           name: '🏗️',
           type: 'infrastructure',
           language: 'terraform',
-          additionalDirectories: ['other/*'],
-        } as any,
+          externalFiles: ['other/*'],
+        },
       },
       functions: [ProjectLintForTerraform],
     }));

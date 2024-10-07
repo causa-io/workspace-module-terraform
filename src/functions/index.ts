@@ -1,4 +1,4 @@
-import { ModuleRegistrationContext } from '@causa/workspace';
+import type { ModuleRegistrationContext } from '@causa/workspace';
 import { InfrastructureDeployForTerraform } from './infrastructure-deploy-terraform.js';
 import { InfrastructurePrepareForTerraform } from './infrastructure-prepare-terraform.js';
 import { ProjectDependenciesUpdateForTerraform } from './project-dependencies-update-terraform.js';
