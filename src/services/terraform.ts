@@ -2,12 +2,12 @@ import { WorkspaceContext } from '@causa/workspace';
 import {
   ProcessService,
   ProcessServiceExitCodeError,
-  SpawnOptions,
-  SpawnedProcessResult,
+  type SpawnOptions,
+  type SpawnedProcessResult,
 } from '@causa/workspace-core';
-import { Logger } from 'pino';
+import type { Logger } from 'pino';
 import { satisfies } from 'semver';
-import { TerraformConfiguration } from '../configurations/index.js';
+import type { TerraformConfiguration } from '../configurations/index.js';
 import { IncompatibleTerraformVersionError } from './terraform.errors.js';
 
 /**

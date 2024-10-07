@@ -1,8 +1,8 @@
 import { WorkspaceContext } from '@causa/workspace';
 import {
-  InfrastructureConfiguration,
+  type InfrastructureConfiguration,
   InfrastructurePrepare,
-  PrepareResult,
+  type PrepareResult,
 } from '@causa/workspace-core';
 import { rm } from 'fs/promises';
 import { resolve } from 'path';
