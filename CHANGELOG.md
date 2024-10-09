@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v0.6.0 (2024-10-09)
+
 Breaking change:
 
 - Use the new `project.externalFiles` configuration when linting Terraform files, instead of `project.additionalDirectories`.
