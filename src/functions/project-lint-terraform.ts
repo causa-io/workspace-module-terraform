@@ -11,8 +11,7 @@ import { TerraformService } from '../services/index.js';
 const TERRAFORM_FILE_EXTENSIONS = ['.tf', '.tfvars', '.tftest.hcl'];
 
 /**
- * Implements the {@link ProjectLint} function for Terraform projects, by running `terraform validate` and
- * `terraform fmt`.
+ * Implements the {@link ProjectLint} function for Terraform projects, by running `terraform fmt`.
  * The Terraform format check is also run on any external files listed in the project configuration.
  */
 export class ProjectLintForTerraform extends ProjectLint {
@@ -27,13 +26,6 @@ export class ProjectLintForTerraform extends ProjectLint {
     const targets = [projectPath, ...externalTerraformFiles];
 
     try {
-      context.logger.info(
-        `🚨 Validating Terraform code for project '${projectName}'.`,
-      );
-      await terraformService.validate({
-        logging: { stdout: null, stderr: 'info' },
-      });
-
       context.logger.info(
         `🎨 Checking format of Terraform code for project '${projectName}'.`,
       );

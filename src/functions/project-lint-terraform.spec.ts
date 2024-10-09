@@ -16,7 +16,7 @@ describe('ProjectLintForTerraform', () => {
   let tmpDir: string;
   let context: WorkspaceContext;
   let terraformService: TerraformService;
-  let validateMock: jest.SpiedFunction<TerraformService['validate']>;
+  let fmtSpy: jest.SpiedFunction<TerraformService['fmt']>;
 
   beforeEach(async () => {
     tmpDir = resolve(await mkdtemp('causa-test-'));
@@ -38,8 +38,7 @@ describe('ProjectLintForTerraform', () => {
       ...options,
     }));
     terraformService = context.service(TerraformService);
-    jest.spyOn(terraformService, 'fmt').mockResolvedValue({ code: 0 });
-    validateMock = jest.spyOn(terraformService, 'validate').mockResolvedValue();
+    fmtSpy = jest.spyOn(terraformService, 'fmt').mockResolvedValue({ code: 0 });
   }
 
   it('should not handle non-terraform projects', async () => {
@@ -55,12 +54,9 @@ describe('ProjectLintForTerraform', () => {
     );
   });
 
-  it('should run terraform validate and fmt', async () => {
+  it('should run terraform fmt', async () => {
     await context.call(ProjectLint, {});
 
-    expect(terraformService.validate).toHaveBeenCalledExactlyOnceWith({
-      logging: { stdout: null, stderr: 'info' },
-    });
     expect(terraformService.fmt).toHaveBeenCalledExactlyOnceWith({
       check: true,
       recursive: true,
@@ -96,9 +92,6 @@ describe('ProjectLintForTerraform', () => {
 
     await context.call(ProjectLint, {});
 
-    expect(terraformService.validate).toHaveBeenCalledExactlyOnceWith({
-      logging: { stdout: null, stderr: 'info' },
-    });
     expect(terraformService.fmt).toHaveBeenCalledExactlyOnceWith({
       check: true,
       recursive: true,
@@ -108,7 +101,7 @@ describe('ProjectLintForTerraform', () => {
   });
 
   it('should throw when one of the terraform commands fails', async () => {
-    validateMock.mockRejectedValueOnce(
+    fmtSpy.mockRejectedValueOnce(
       new ProcessServiceExitCodeError('terraform', [], { code: 1 }),
     );
 
