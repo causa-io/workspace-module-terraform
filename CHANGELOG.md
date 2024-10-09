@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+Breaking change:
+
+- Use the new `project.externalFiles` configuration when linting Terraform files, instead of `project.additionalDirectories`.
+- Do not run `terraform validate` during `cs lint` because it may require additional Terraform configuration.
+
 ## v0.5.0 (2024-05-21)
 
 Breaking change:
