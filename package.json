@@ -2,11 +2,14 @@
   "name": "@causa/workspace-terraform",
   "version": "0.6.1",
   "description": "The Causa workspace module providing functionalities for infrastructure projects coded in Terraform.",
-  "repository": "github:causa-io/workspace-module-terraform",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/causa-io/workspace-module-terraform.git"
+  },
   "license": "ISC",
   "type": "module",
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

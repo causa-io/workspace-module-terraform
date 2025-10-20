@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+Breaking changes:
+
+- Upgrade the minimum Node.js version to `20`.
+
 Chore:
 
 - Upgrade dependencies.
