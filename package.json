@@ -1,6 +1,6 @@
 {
   "name": "@causa/workspace-terraform",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "The Causa workspace module providing functionalities for infrastructure projects coded in Terraform.",
   "repository": {
     "type": "git",
