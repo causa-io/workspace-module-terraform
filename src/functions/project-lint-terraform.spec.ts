@@ -96,7 +96,7 @@ describe('ProjectLintForTerraform', () => {
       check: true,
       recursive: true,
       logging: 'info',
-      targets: expect.toContainAllValues([projectPath, matchingFile]),
+      targets: expect.toIncludeSameMembers([projectPath, matchingFile]),
     });
   });
 
