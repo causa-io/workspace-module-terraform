@@ -337,7 +337,7 @@ describe('TerraformService', () => {
         fn,
       );
 
-      await expect(actualPromise).rejects.toThrowError(expectedError);
+      await expect(actualPromise).rejects.toThrow(expectedError);
       expect(service.init).toHaveBeenCalledExactlyOnceWith(
         expectedSpawnOptions,
       );
