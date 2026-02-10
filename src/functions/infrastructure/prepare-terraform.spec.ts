@@ -6,8 +6,8 @@ import { jest } from '@jest/globals';
 import { mkdtemp, rm, stat, writeFile } from 'fs/promises';
 import 'jest-extended';
 import { resolve } from 'path';
-import { TerraformService } from '../services/index.js';
-import { InfrastructurePrepareForTerraform } from './infrastructure-prepare-terraform.js';
+import { TerraformService } from '../../services/index.js';
+import { InfrastructurePrepareForTerraform } from './prepare-terraform.js';
 
 describe('InfrastructurePrepareForTerraform', () => {
   let context: WorkspaceContext;

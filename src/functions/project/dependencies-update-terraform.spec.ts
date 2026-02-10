@@ -4,8 +4,8 @@ import { NoImplementationFoundError } from '@causa/workspace/function-registry';
 import { createContext } from '@causa/workspace/testing';
 import { jest } from '@jest/globals';
 import 'jest-extended';
-import { TerraformService } from '../services/index.js';
-import { ProjectDependenciesUpdateForTerraform } from './project-dependencies-update-terraform.js';
+import { TerraformService } from '../../services/index.js';
+import { ProjectDependenciesUpdateForTerraform } from './dependencies-update-terraform.js';
 
 describe('ProjectDependenciesUpdateForTerraform', () => {
   let context: WorkspaceContext;

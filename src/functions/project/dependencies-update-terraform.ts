@@ -1,6 +1,6 @@
 import { WorkspaceContext } from '@causa/workspace';
 import { ProjectDependenciesUpdate } from '@causa/workspace-core';
-import { TerraformService } from '../services/index.js';
+import { TerraformService } from '../../services/index.js';
 
 /**
  * Implements the {@link ProjectDependenciesUpdate} function for Terraform projects, by running `terraform init`.

@@ -2,7 +2,7 @@ import { WorkspaceContext } from '@causa/workspace';
 import { ProjectInit } from '@causa/workspace-core';
 import { rm } from 'fs/promises';
 import { join } from 'path';
-import { TerraformService } from '../services/index.js';
+import { TerraformService } from '../../services/index.js';
 
 /**
  * The name of the folder automatically created by Terraform during initialization.
