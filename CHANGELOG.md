@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v0.8.0-rc.1 (2026-02-10)
+
 Features:
 
 - Define JSONSchemas for configurations and provide them with `CausaListConfigurationSchemas`.
