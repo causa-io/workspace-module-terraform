@@ -34,6 +34,7 @@ export class ProjectInitForTerraform extends ProjectInit {
 
   _supports(context: WorkspaceContext): boolean {
     return (
+      !this.workspace &&
       context.get('project.language') === 'terraform' &&
       context.get('project.type') === 'infrastructure'
     );

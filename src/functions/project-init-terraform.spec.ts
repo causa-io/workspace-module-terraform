@@ -32,6 +32,12 @@ describe('ProjectInitForTerraform', () => {
     await rm(tmpDir, { recursive: true, force: true });
   });
 
+  it('should not support the workspace option', () => {
+    expect(() => context.call(ProjectInit, { workspace: true })).toThrow(
+      NoImplementationFoundError,
+    );
+  });
+
   it('should not handle non-terraform projects', async () => {
     ({ context } = createContext({
       configuration: {
