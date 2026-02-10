@@ -1,8 +1,6 @@
 import { WorkspaceContext } from '@causa/workspace';
-import {
-  ProcessServiceExitCodeError,
-  ProjectLint,
-} from '@causa/workspace-core';
+import { ProjectLint } from '@causa/workspace-core';
+import { ProcessServiceExitCodeError } from '@causa/workspace-core/services';
 import { TerraformService } from '../services/index.js';
 
 /**
