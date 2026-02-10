@@ -1,1 +1,1 @@
-export type { TerraformConfiguration } from './terraform.js';
+export { TerraformConfiguration } from './generated.js';

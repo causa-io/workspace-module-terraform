@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+Features:
+
+- Define JSONSchemas for configurations and provide them with `CausaListConfigurationSchemas`.
+
+Chores:
+
+- Support the `--workspace` option in `ProjectInit` (`cs init`).
+
 ## v0.7.2 (2026-02-06)
 
 Chore:

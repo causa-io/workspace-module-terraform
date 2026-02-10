@@ -25,15 +25,18 @@
   "scripts": {
     "prebuild": "rimraf ./dist",
     "build": "tsc -p tsconfig.build.json",
+    "postbuild": "node transform-schemas.mjs",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint \"src/**/*.ts\"",
     "test": "NODE_OPTIONS=\"--experimental-vm-modules --no-warnings=ExperimentalWarning\" jest",
     "test:cov": "npm run test -- --coverage",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "generateConfigurationSchemas": "cs model genCode && perl -pi -e 's|\\@causa/runtime|\\@causa/workspace/validation|g' src/configurations/generated.ts"
   },
   "dependencies": {
     "@causa/workspace": ">= 0.22.0 < 1.0.0",
     "@causa/workspace-core": ">= 0.27.0-rc.1 < 1.0.0",
+    "globby": "^16.1.0",
     "pino": "^10.3.1",
     "semver": "^7.7.4"
   },
