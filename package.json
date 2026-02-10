@@ -34,6 +34,7 @@
   "dependencies": {
     "@causa/workspace": ">= 0.22.0 < 1.0.0",
     "@causa/workspace-core": ">= 0.27.0-rc.1 < 1.0.0",
+    "globby": "^16.1.0",
     "pino": "^10.3.1",
     "semver": "^7.7.4"
   },
