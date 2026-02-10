@@ -6,7 +6,7 @@ import {
 } from '@causa/workspace-core';
 import { rm } from 'fs/promises';
 import { resolve } from 'path';
-import { TerraformService } from '../services/index.js';
+import { TerraformService } from '../../services/index.js';
 
 /**
  * The default name of the output Terraform plan file.

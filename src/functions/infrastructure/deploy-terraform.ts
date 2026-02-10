@@ -2,7 +2,7 @@ import { WorkspaceContext } from '@causa/workspace';
 import { InfrastructureDeploy } from '@causa/workspace-core';
 import { rm } from 'fs/promises';
 import { resolve } from 'path';
-import { TerraformService } from '../services/index.js';
+import { TerraformService } from '../../services/index.js';
 
 /**
  * Implements the {@link InfrastructureDeploy} function for Infrastructure as Code defined using Terraform.

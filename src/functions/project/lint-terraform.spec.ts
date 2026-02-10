@@ -7,8 +7,8 @@ import { jest } from '@jest/globals';
 import { mkdir, mkdtemp, rm, writeFile } from 'fs/promises';
 import 'jest-extended';
 import { join, resolve } from 'path';
-import { TerraformService } from '../services/index.js';
-import { ProjectLintForTerraform } from './project-lint-terraform.js';
+import { TerraformService } from '../../services/index.js';
+import { ProjectLintForTerraform } from './lint-terraform.js';
 
 describe('ProjectLintForTerraform', () => {
   let tmpDir: string;

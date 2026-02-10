@@ -1,7 +1,7 @@
 import { WorkspaceContext } from '@causa/workspace';
 import { ProjectLint } from '@causa/workspace-core';
 import { ProcessServiceExitCodeError } from '@causa/workspace-core/services';
-import { TerraformService } from '../services/index.js';
+import { TerraformService } from '../../services/index.js';
 
 /**
  * The list of file extensions that `terraform fmt` supports.
