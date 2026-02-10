@@ -1,8 +1,6 @@
 import { WorkspaceContext } from '@causa/workspace';
-import {
-  ProcessServiceExitCodeError,
-  ProjectLint,
-} from '@causa/workspace-core';
+import { ProjectLint } from '@causa/workspace-core';
+import { ProcessServiceExitCodeError } from '@causa/workspace-core/services';
 import { NoImplementationFoundError } from '@causa/workspace/function-registry';
 import { createContext } from '@causa/workspace/testing';
 import { jest } from '@jest/globals';

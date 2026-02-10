@@ -4,7 +4,7 @@ import {
   ProcessServiceExitCodeError,
   type SpawnOptions,
   type SpawnedProcessResult,
-} from '@causa/workspace-core';
+} from '@causa/workspace-core/services';
 import type { Logger } from 'pino';
 import { satisfies } from 'semver';
 import type { TerraformConfiguration } from '../configurations/index.js';

@@ -28,12 +28,13 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint \"src/**/*.ts\"",
     "test": "NODE_OPTIONS=\"--experimental-vm-modules --no-warnings=ExperimentalWarning\" jest",
-    "test:cov": "npm run test -- --coverage"
+    "test:cov": "npm run test -- --coverage",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@causa/workspace": ">= 0.19.2 < 1.0.0",
-    "@causa/workspace-core": ">= 0.26.0 < 1.0.0",
-    "pino": "^10.3.0",
+    "@causa/workspace": ">= 0.22.0 < 1.0.0",
+    "@causa/workspace-core": ">= 0.27.0-rc.1 < 1.0.0",
+    "pino": "^10.3.1",
     "semver": "^7.7.4"
   },
   "devDependencies": {
@@ -50,6 +51,6 @@
     "jest-extended": "^7.0.0",
     "rimraf": "^6.1.2",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.54.0"
+    "typescript-eslint": "^8.55.0"
   }
 }
