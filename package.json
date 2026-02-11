@@ -45,7 +45,7 @@
     "@swc/jest": "^0.2.39",
     "@tsconfig/node20": "^20.1.9",
     "@types/jest": "^30.0.0",
-    "@types/node": "^18.19.130",
+    "@types/node": "^20.19.33",
     "@types/semver": "^7.7.1",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
