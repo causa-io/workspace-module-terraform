@@ -3,6 +3,30 @@
 import { AllowMissing } from '@causa/workspace/validation';
 import { IsString } from 'class-validator';
 
+export class Project {
+  constructor(init: Project) {
+    Object.assign(this, init);
+  }
+
+  @AllowMissing()
+  @IsString()
+  readonly language?: string;
+  [property: string]: any;
+}
+
+/**
+ * Refinement of the project configuration with the known Terraform language.
+ */
+export class TerraformProjectConfiguration {
+  constructor(init: TerraformProjectConfiguration) {
+    Object.assign(this, init);
+  }
+
+  @AllowMissing()
+  readonly project?: Project;
+  [property: string]: any;
+}
+
 /**
  * Configuration for Terraform.
  */
