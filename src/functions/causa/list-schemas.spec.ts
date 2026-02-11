@@ -14,6 +14,9 @@ describe('CausaListConfigurationSchemasForTerraform', () => {
     const actualSchemas = await context.call(CausaListConfigurationSchemas, {});
 
     const actualBaseNames = actualSchemas.map((s) => basename(s));
-    expect(actualBaseNames).toIncludeSameMembers(['terraform.yaml']);
+    expect(actualBaseNames).toIncludeSameMembers([
+      'project.yaml',
+      'terraform.yaml',
+    ]);
   });
 });
