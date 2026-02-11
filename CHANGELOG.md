@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v0.9.0 (2026-02-11)
+
 Features:
 
 - Refine configuration schemas with known `project.language` values.
