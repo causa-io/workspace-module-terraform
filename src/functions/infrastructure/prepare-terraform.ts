@@ -1,4 +1,3 @@
-import { WorkspaceContext } from '@causa/workspace';
 import {
   type InfrastructureConfiguration,
   InfrastructurePrepare,
@@ -18,12 +17,12 @@ const DEFAULT_PLAN_FILE = 'plan.out';
  * This calls the `terraform plan` command for the given project.
  */
 export class InfrastructurePrepareForTerraform extends InfrastructurePrepare {
-  async _call(context: WorkspaceContext): Promise<PrepareResult> {
-    const projectPath = context.getProjectPathOrThrow();
+  async _call(): Promise<PrepareResult> {
+    const projectPath = this._context.getProjectPathOrThrow();
     const infrastructureConf =
-      context.asConfiguration<InfrastructureConfiguration>();
+      this._context.asConfiguration<InfrastructureConfiguration>();
     const projectName = infrastructureConf.getOrThrow('project.name');
-    const terraformService = context.service(TerraformService);
+    const terraformService = this._context.service(TerraformService);
 
     const variables =
       (await infrastructureConf.getAndRender('infrastructure.variables')) ?? {};
@@ -31,7 +30,7 @@ export class InfrastructurePrepareForTerraform extends InfrastructurePrepare {
       ? resolve(this.output)
       : resolve(projectPath, DEFAULT_PLAN_FILE);
 
-    context.logger.info(
+    this._context.logger.info(
       `🧱 Planning Terraform deployment for project '${projectName}'.`,
     );
 
@@ -41,7 +40,7 @@ export class InfrastructurePrepareForTerraform extends InfrastructurePrepare {
     );
 
     if (isDeploymentNeeded) {
-      context.logger.info(
+      this._context.logger.info(
         '🧱 Terraform plan has changes that can be deployed.',
       );
 
@@ -53,16 +52,16 @@ export class InfrastructurePrepareForTerraform extends InfrastructurePrepare {
       return { output, isDeploymentNeeded };
     }
 
-    context.logger.info('🧱 Terraform plan has no change.');
+    this._context.logger.info('🧱 Terraform plan has no change.');
     await rm(output);
 
     return { output: '', isDeploymentNeeded };
   }
 
-  _supports(context: WorkspaceContext): boolean {
+  _supports(): boolean {
     return (
-      context.get('project.language') === 'terraform' &&
-      context.get('project.type') === 'infrastructure'
+      this._context.get('project.language') === 'terraform' &&
+      this._context.get('project.type') === 'infrastructure'
     );
   }
 }

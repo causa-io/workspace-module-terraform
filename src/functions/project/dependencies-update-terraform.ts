@@ -1,4 +1,3 @@
-import { WorkspaceContext } from '@causa/workspace';
 import { ProjectDependenciesUpdate } from '@causa/workspace-core';
 import { TerraformService } from '../../services/index.js';
 
@@ -8,22 +7,24 @@ import { TerraformService } from '../../services/index.js';
  * updates the lock file accordingly.
  */
 export class ProjectDependenciesUpdateForTerraform extends ProjectDependenciesUpdate {
-  async _call(context: WorkspaceContext): Promise<boolean> {
-    context.logger.info('⬆️ Updating Terraform dependencies.');
+  async _call(): Promise<boolean> {
+    this._context.logger.info('⬆️ Updating Terraform dependencies.');
 
-    await context
+    await this._context
       .service(TerraformService)
       .init({ upgrade: true, logging: 'debug' });
 
-    context.logger.info(`️✅ Successfully updated Terraform dependencies.`);
+    this._context.logger.info(
+      `️✅ Successfully updated Terraform dependencies.`,
+    );
 
     return true;
   }
 
-  _supports(context: WorkspaceContext): boolean {
+  _supports(): boolean {
     return (
-      context.get('project.language') === 'terraform' &&
-      context.get('project.type') === 'infrastructure'
+      this._context.get('project.language') === 'terraform' &&
+      this._context.get('project.type') === 'infrastructure'
     );
   }
 }
