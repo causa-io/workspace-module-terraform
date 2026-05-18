@@ -1,4 +1,3 @@
-import { WorkspaceContext } from '@causa/workspace';
 import { ProjectLint } from '@causa/workspace-core';
 import { ProcessServiceExitCodeError } from '@causa/workspace-core/services';
 import { TerraformService } from '../../services/index.js';
@@ -13,21 +12,21 @@ const TERRAFORM_FILE_EXTENSIONS = ['.tf', '.tfvars', '.tftest.hcl'];
  * The Terraform format check is also run on any external files listed in the project configuration.
  */
 export class ProjectLintForTerraform extends ProjectLint {
-  async _call(context: WorkspaceContext): Promise<void> {
-    const projectPath = context.getProjectPathOrThrow();
-    const projectName = context.get('project.name');
-    const terraformService = context.service(TerraformService);
-    const externalPaths = await context.getProjectExternalPaths();
+  async _call(): Promise<void> {
+    const projectPath = this._context.getProjectPathOrThrow();
+    const projectName = this._context.get('project.name');
+    const terraformService = this._context.service(TerraformService);
+    const externalPaths = await this._context.getProjectExternalPaths();
     const externalTerraformFiles = externalPaths.filter((p) =>
       TERRAFORM_FILE_EXTENSIONS.some((ext) => p.endsWith(ext)),
     );
     const targets = [projectPath, ...externalTerraformFiles];
 
     try {
-      context.logger.info(
+      this._context.logger.info(
         `🎨 Checking format of Terraform code for project '${projectName}'.`,
       );
-      context.logger.debug(
+      this._context.logger.debug(
         `Targets for Terraform format: ${targets.map((t) => `'${t}'`).join(', ')}.`,
       );
       await terraformService.fmt({
@@ -37,7 +36,7 @@ export class ProjectLintForTerraform extends ProjectLint {
         logging: 'info',
       });
 
-      context.logger.info('✅ Terraform code passed linting.');
+      this._context.logger.info('✅ Terraform code passed linting.');
     } catch (error) {
       if (error instanceof ProcessServiceExitCodeError) {
         throw new Error('Linting the Terraform project failed.');
@@ -47,10 +46,10 @@ export class ProjectLintForTerraform extends ProjectLint {
     }
   }
 
-  _supports(context: WorkspaceContext): boolean {
+  _supports(): boolean {
     return (
-      context.get('project.language') === 'terraform' &&
-      context.get('project.type') === 'infrastructure'
+      this._context.get('project.language') === 'terraform' &&
+      this._context.get('project.type') === 'infrastructure'
     );
   }
 }

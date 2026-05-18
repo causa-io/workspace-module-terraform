@@ -1,4 +1,3 @@
-import { WorkspaceContext } from '@causa/workspace';
 import { InfrastructureDeploy } from '@causa/workspace-core';
 import { rm } from 'fs/promises';
 import { resolve } from 'path';
@@ -9,12 +8,12 @@ import { TerraformService } from '../../services/index.js';
  * This calls the `terraform apply` command for the given project.
  */
 export class InfrastructureDeployForTerraform extends InfrastructureDeploy {
-  async _call(context: WorkspaceContext): Promise<void> {
-    context.getProjectPathOrThrow();
-    const projectName = context.getOrThrow('project.name');
-    const terraformService = context.service(TerraformService);
+  async _call(): Promise<void> {
+    this._context.getProjectPathOrThrow();
+    const projectName = this._context.getOrThrow('project.name');
+    const terraformService = this._context.service(TerraformService);
 
-    context.logger.info(
+    this._context.logger.info(
       `🧱 Applying Terraform plan for project '${projectName}'.`,
     );
 
@@ -24,15 +23,15 @@ export class InfrastructureDeployForTerraform extends InfrastructureDeploy {
       terraformService.apply(plan, { logging: 'info' }),
     );
 
-    context.logger.info('🧱 Successfully applied Terraform plan.');
+    this._context.logger.info('🧱 Successfully applied Terraform plan.');
 
     await rm(plan);
   }
 
-  _supports(context: WorkspaceContext): boolean {
+  _supports(): boolean {
     return (
-      context.get('project.language') === 'terraform' &&
-      context.get('project.type') === 'infrastructure'
+      this._context.get('project.language') === 'terraform' &&
+      this._context.get('project.type') === 'infrastructure'
     );
   }
 }

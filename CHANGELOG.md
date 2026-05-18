@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+Chores:
+
+- Adapt to `@causa/workspace` breaking changes: `_call` and `_supports` no longer take a `context` argument and instead use the `_context` property.
+- Replace `js-yaml` with `yaml` in the schema transformation script.
+
 ## v0.10.0 (2026-04-13)
 
 Breaking changes:
