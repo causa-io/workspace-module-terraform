@@ -5,9 +5,11 @@ type: object
 description: Refinement of the project configuration with the known Terraform language.
 properties:
   project:
+    title: Project
     type: object
     properties:
       language:
+        title: Language
         anyOf:
           - type: string
 
