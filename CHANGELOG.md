@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+Features:
+
+- Add the `TerraformProjectsFact`, which parses the Terraform code of each infrastructure project for architecture graph rules.
+
 ## v1.0.0 (2026-06-09)
 
 This release includes all the changes from the `v0.11.0-beta.*` version.
