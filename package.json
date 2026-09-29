@@ -36,6 +36,7 @@
   "dependencies": {
     "@causa/workspace": ">=1.0.0",
     "@causa/workspace-core": ">=1.0.1",
+    "@cdktf/hcl2json": "^0.21.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
     "globby": "^16.2.0",
