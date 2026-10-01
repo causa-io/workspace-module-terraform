@@ -34,3 +34,7 @@ The Terraform module also supports some of the project-level commands, namely:
 - `cs init`: Runs `terraform init`.
 - `cs lint`: Runs `terraform fmt`. The format operation is run with the `-check` argument, such that it only lints the code without fixing it. This operation supports the `project.externalFiles` configuration, by linting all Terraform files matching the glob patterns.
 - `cs dependencies update`: Runs `terraform init` with the `-upgrade` option, allowing the update of dependencies and the lock file.
+
+## 🕸️ Architecture graph
+
+This module contributes to the architecture graph extracted by `cs graph extract` (see the core module). The `TerraformProjectsFact` reads the Terraform configuration applied by each infrastructure project written in Terraform: the project directory is the root module, from which local module inclusions (`source = "../some/directory"`) are followed. For each project, it lists the modules, and their `module` and `resource` blocks. Modules supporting Terraform code (e.g. for a cloud provider) read the blocks from this fact to mirror the resources they create.
