@@ -1,7 +1,7 @@
 import {
   domainAt,
   DomainsFact,
-  GraphFact,
+  GraphExtractionFact,
   ProjectsFact,
   type GraphContext,
   type GraphFactOutput,
@@ -19,7 +19,9 @@ import { parseTerraformDirectory, type ParsedDirectory } from './sources.js';
  * The Terraform configurations applied by the infrastructure projects written in Terraform. The directory of each
  * project is its root module, and local `module` blocks (`source = "../some/directory"`) are followed from there.
  */
-export class TerraformProjectsFact extends GraphFact<TerraformProject[]> {
+export class TerraformProjectsFact extends GraphExtractionFact<
+  TerraformProject[]
+> {
   /**
    * The directories parsed during the extraction, keyed by path relative to the workspace root. A directory included
    * by several projects is only parsed once.
