@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+Chore:
+
+- Upgrade dependencies.
+
 ## v1.1.0-beta.1 (2026-10-01)
 
 Features:
